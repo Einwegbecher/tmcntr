@@ -1,6 +1,4 @@
 fastapi
-uvicorn
+uvicorn[standard]
 python-multipart
-sqlalchemy
-pydantic
-python-dateutil
+jinja2
