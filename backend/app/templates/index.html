@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Zeit-Tracker</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Zeit-Tracker</h1>
+        
+        <div class="timer-section">
+            <h2>Timer</h2>
+            <div id="timer-display">00:00:00</div>
+            <div class="timer-controls">
+                <button id="start-btn" class="btn btn-start">Start</button>
+                <button id="stop-btn" class="btn btn-stop" disabled>Stop</button>
+            </div>
+            <form id="note-form" class="note-form" style="display: none;">
+                <label for="note">Notiz:</label>
+                <textarea id="note" name="note" rows="2"></textarea>
+                <input type="hidden" id="timer-id" name="timer_id" value="">
+            </form>
+        </div>
+        
+        <div class="manual-entry">
+            <h2>Manueller Eintrag</h2>
+            <form action="/add_time_slot" method="post" class="manual-form">
+                <div class="form-group">
+                    <label for="start_time">Startzeit:</label>
+                    <input type="datetime-local" id="start_time" name="start_time" required>
+                </div>
+                <div class="form-group">
+                    <label for="end_time">Endzeit:</label>
+                    <input type="datetime-local" id="end_time" name="end_time" required>
+                </div>
+                <div class="form-group">
+                    <label for="manual_note">Notiz:</label>
+                    <textarea id="manual_note" name="note" rows="2"></textarea>
+                </div>
+                <button type="submit" class="btn btn-add">Hinzufügen</button>
+            </form>
+        </div>
+        
+        <div class="navigation">
+            <h2>Ansichten</h2>
+            <div class="nav-buttons">
+                <a href="/day" class="btn btn-nav">Tagesansicht</a>
+                <a href="/week" class="btn btn-nav">Wochenansicht</a>
+                <a href="/month" class="btn btn-nav">Monatsansicht</a>
+            </div>
+        </div>
+        
+        <div class="recent-slots">
+            <h2>Letzte Einträge</h2>
+            <table class="slots-table">
+                <thead>
+                    <tr>
+                        <th>Start</th>
+                        <th>Ende</th>
+                        <th>Dauer</th>
+                        <th>Notiz</th>
+                        <th>Aktion</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for slot in recent_slots %}
+                    <tr>
+                        <td>{{ slot.start_time[:16] if slot.start_time else '-' }}</td>
+                        <td>{{ slot.end_time[:16] if slot.end_time else '-' }}</td>
+                        <td>{{ calculate_duration(slot) }}</td>
+                        <td>{{ slot.note if slot.note else '-' }}</td>
+                        <td>
+                            <form action="/delete_time_slot" method="post" style="display: inline;">
+                                <input type="hidden" name="slot_id" value="{{ slot.id }}">
+                                <button type="submit" class="btn btn-delete">Löschen</button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script src="/static/script.js"></script>
+</body>
+</html>

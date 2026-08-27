@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tagesansicht - Zeit-Tracker</title>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Tagesansicht</h1>
+        
+        <div class="date-navigation">
+            <form action="/day" method="get" class="date-form">
+                <input type="date" name="date" value="{{ date }}" class="date-input">
+                <button type="submit" class="btn btn-nav">Anzeigen</button>
+            </form>
+        </div>
+        
+        <div class="stats">
+            <p>Gesamtzeit: <strong>{{ total_time }}</strong></p>
+        </div>
+        
+        <table class="slots-table">
+            <thead>
+                <tr>
+                    <th>Start</th>
+                    <th>Ende</th>
+                    <th>Dauer</th>
+                    <th>Notiz</th>
+                    <th>Aktion</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for slot in slots %}
+                <tr>
+                    <td>{{ slot.start_time[11:16] if slot.start_time else '-' }}</td>
+                    <td>{{ slot.end_time[11:16] if slot.end_time else '-' }}</td>
+                    <td>
+                        {% if slot.end_time %}
+                            {% set start = datetime.fromisoformat(slot.start_time) %}
+                            {% set end = datetime.fromisoformat(slot.end_time) %}
+                            {% set delta = end - start %}
+                            {% set hours = delta.seconds // 3600 %}
+                            {% set minutes = (delta.seconds % 3600) // 60 %}
+                            {% set seconds = delta.seconds % 60 %}
+                            {{ hours }}:{{ minutes|string|e('02d') }}:{{ seconds|string|e('02d') }}
+                        {% else %}
+                            -:--:--
+                        {% endif %}
+                    </td>
+                    <td>{{ slot.note if slot.note else '-' }}</td>
+                    <td>
+                        <form action="/delete_time_slot" method="post" style="display: inline;">
+                            <input type="hidden" name="slot_id" value="{{ slot.id }}">
+                            <button type="submit" class="btn btn-delete">Löschen</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="navigation-back">
+            <a href="/" class="btn btn-nav">Zurück zur Startseite</a>
+        </div>
+    </div>
+</body>
+</html>
