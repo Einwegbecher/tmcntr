@@ -9,11 +9,13 @@ services:
       - ./data:/app/data
     environment:
       - PYTHONUNBUFFERED=1
+      - PYTHONPATH=/app
     ports:
       - "8000:8000"
     restart: unless-stopped
     networks:
       - time_tracker_network
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
 
   nginx:
     image: nginx:alpine
