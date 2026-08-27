@@ -1,5 +1,2 @@
-fastapi
+fastapi[all]
 uvicorn[standard]
-python-multipart
-jinja2
-python-dateutil
