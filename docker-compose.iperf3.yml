@@ -1,0 +1,11 @@
+version: '3.8'
+
+services:
+  iperf3-server:
+    image: networkstatic/iperf3
+    container_name: iperf3_server
+    command: -s
+    ports:
+      - "5201:5201/tcp"
+      - "5201:5201/udp"
+    restart: unless-stopped
